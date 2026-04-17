@@ -95,6 +95,8 @@ class Config:
     adaptive_weight: float = 0.05
     use_target_history: bool = True
     use_spatial_lag_features: bool = True
+    use_second_order_lag_features: bool = False
+    use_change_features: bool = False
     input_dim: int = 8
     encoder_hidden: int = 32
     hidden_dim: int = 64
@@ -114,6 +116,17 @@ class Config:
     early_stop_patience: int = 30
     seed: int = 42
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
+
+
+def finalize_config(config: Config) -> Config:
+    config.input_dim = len(FEATURE_COLUMNS) + int(config.use_target_history)
+    if config.use_spatial_lag_features:
+        config.input_dim += 2
+    if config.use_second_order_lag_features:
+        config.input_dim += 4
+    if config.use_change_features:
+        config.input_dim += 2
+    return config
 
 
 def set_seed(seed: int) -> None:
@@ -191,7 +204,12 @@ def load_all_data(config: Config):
         feature_names = [TARGET_COLUMN] + feature_names
     if config.use_spatial_lag_features:
         feature_names = feature_names + ["W_EE", "W_DE"]
+    if config.use_second_order_lag_features:
+        feature_names = feature_names + ["EE_lag1", "EE_lag2", "DE_lag1", "DE_lag2"]
+    if config.use_change_features:
+        feature_names = feature_names + ["dEE", "dDE"]
 
+    year_index = {year: idx for idx, year in enumerate(YEARS)}
     for year in YEARS:
         parts = []
         if config.use_target_history:
@@ -203,6 +221,19 @@ def load_all_data(config: Config):
             de_idx = FEATURE_COLUMNS.index("DE")
             spatial_de = graph @ base_features_by_year[year][:, [de_idx]]
             parts.extend([spatial_ee, spatial_de])
+        if config.use_second_order_lag_features or config.use_change_features:
+            idx = year_index[year]
+            prev1 = YEARS[idx - 1] if idx - 1 >= 0 else year
+            prev2 = YEARS[idx - 2] if idx - 2 >= 0 else prev1
+            prev1_ee = targets_by_year[prev1]
+            prev2_ee = targets_by_year[prev2]
+            de_idx = FEATURE_COLUMNS.index("DE")
+            prev1_de = base_features_by_year[prev1][:, [de_idx]]
+            prev2_de = base_features_by_year[prev2][:, [de_idx]]
+            if config.use_second_order_lag_features:
+                parts.extend([prev1_ee, prev2_ee, prev1_de, prev2_de])
+            if config.use_change_features:
+                parts.extend([targets_by_year[year] - prev1_ee, base_features_by_year[year][:, [de_idx]] - prev1_de])
         features_by_year[year] = np.concatenate(parts, axis=1).astype(np.float32)
 
     return features_by_year, targets_by_year, graphs_by_year, feature_names
@@ -511,6 +542,7 @@ def make_paper_summary(
 
 
 def run_training(config: Config):
+    config = finalize_config(config)
     set_seed(config.seed)
     features_by_year, targets_by_year, graphs_by_year, feature_names = load_all_data(config)
     samples = build_windows(
@@ -734,8 +766,7 @@ def df_to_markdown(df: pd.DataFrame) -> str:
 
 
 def main():
-    config = Config()
-    config.input_dim = len(FEATURE_COLUMNS) + int(config.use_target_history) + (2 if config.use_spatial_lag_features else 0)
+    config = finalize_config(Config())
     summary = run_training(config)
     print_summary(summary)
     out_path = DATA_DIR / "stgnn_training_summary.json"
