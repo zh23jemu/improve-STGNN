@@ -1,0 +1,68 @@
+[
+  {
+    "target_province": "江苏",
+    "shock_sd": 0.25,
+    "target_change": 0.0029360055923461914,
+    "target_relative_change_percent": 0.267670214176178,
+    "neighbor_count": 4,
+    "avg_neighbor_change": 0.0002400517405476421,
+    "max_neighbor_change": 0.0004443168581929058,
+    "min_neighbor_change": 5.638599395751953e-05,
+    "spillover_ratio": 0.08176133781671524
+  },
+  {
+    "target_province": "江苏",
+    "shock_sd": 0.5,
+    "target_change": 0.005478465463966131,
+    "target_relative_change_percent": 0.4994615912437439,
+    "neighbor_count": 4,
+    "avg_neighbor_change": 0.0004696518590208143,
+    "max_neighbor_change": 0.0008501529810018837,
+    "min_neighbor_change": 7.389784150291234e-05,
+    "spillover_ratio": 0.08572690188884735
+  },
+  {
+    "target_province": "江苏",
+    "shock_sd": 0.75,
+    "target_change": 0.007525265216827393,
+    "target_relative_change_percent": 0.6860645413398743,
+    "neighbor_count": 4,
+    "avg_neighbor_change": 0.0007013082504272461,
+    "max_neighbor_change": 0.0012150764232501388,
+    "min_neighbor_change": 6.248951103771105e-05,
+    "spillover_ratio": 0.09319382160902023
+  },
+  {
+    "target_province": "广东",
+    "shock_sd": 0.25,
+    "target_change": 0.0028411149978637695,
+    "target_relative_change_percent": 0.26004695892333984,
+    "neighbor_count": 5,
+    "avg_neighbor_change": 0.0007133364561013877,
+    "max_neighbor_change": 0.0014516353840008378,
+    "min_neighbor_change": 0.00021456480317283422,
+    "spillover_ratio": 0.25107622146606445
+  },
+  {
+    "target_province": "广东",
+    "shock_sd": 0.5,
+    "target_change": 0.0054263947531580925,
+    "target_relative_change_percent": 0.49667736887931824,
+    "neighbor_count": 5,
+    "avg_neighbor_change": 0.0014448928413912654,
+    "max_neighbor_change": 0.002861225511878729,
+    "min_neighbor_change": 0.0004657983663491905,
+    "spillover_ratio": 0.2662712335586548
+  },
+  {
+    "target_province": "广东",
+    "shock_sd": 0.75,
+    "target_change": 0.007653546519577503,
+    "target_relative_change_percent": 0.7005283236503601,
+    "neighbor_count": 5,
+    "avg_neighbor_change": 0.0021883570589125156,
+    "max_neighbor_change": 0.0041685462929308414,
+    "min_neighbor_change": 0.0007733583333902061,
+    "spillover_ratio": 0.2859271764755249
+  }
+]
